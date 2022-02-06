@@ -52,7 +52,7 @@ var createDatum = function(pitchValues, timeValues) {
 };
 
 var pitchPlotNew = function(
-  timeValues, pitchValues, w, h, tonic, svaraCents, extProp = 0.5) {
+  timeValues, pitchValues, t1, t2, w, h, tonic, svaraCents) {
   
   var centsSvara = swap(svaraCents);
   var pitchCents = pitchToCents(pitchValues, tonic);
@@ -69,7 +69,7 @@ var pitchPlotNew = function(
   
   var minPitch = Math.floor(d3.min(pitchCents)) - pitchPadding;
   var maxPitch = Math.ceil(d3.max(pitchCents)) + pitchPadding;
-
+    
   // Configure axis
   var xTicks = d3.range(minTime, maxTime, 150);
 
@@ -95,8 +95,9 @@ var pitchPlotNew = function(
                     return centsSvara[d];
                   });
 
-  // Populate chart
-  /////////////////
+  ////////////////////
+  // Populate chart //
+  ///////////////// //
   var chart = d3.select(".chart");
 
   var svg = chart.append("svg")
@@ -162,20 +163,29 @@ var pitchPlotNew = function(
      .attr("class", "xGridline");
 
 
+  // Plotted line
   var line = d3.line()
                .x(function(d) { return xScale(d.time);})
                .y(function(d) { return yScale(d.pitch);})
                .curve(d3.curveBasis);
-
-  // Plot data
+ 
+  // Plot
   svg.append("path")
-     .datum(data)
-     .attr("class", "line")
-     .attr("d", line)
-     .style("opacity", 0.7)
-     .style("stroke", "orange")
-     .style("stroke-width", 1)
+        .datum(data)
+        .attr("class", "line")
+        .attr("d", line)
+        .style("opacity", 0.7)
+        .style("stroke", "orange")
+        .style("stroke-width", 1);
 
+
+  // Highlighed pattern region
+  svg.append("rect") 
+        .attr("x", xScale(t1))
+        .attr("y", yScale(maxPitch))
+        .attr("width", t2-t1)
+        .attr("height", yScale(minPitch)-paddingTop)
+        .attr("class", 'patternArea');
 
 };
 
@@ -198,7 +208,7 @@ var carnaticPatterns = function(dataFile) {
     
     xValues = time.slice(100, 1000)
     yValues = pitch.slice(100, 1000)
-    pitchPlotNew(xValues, yValues, w, h, tonic, svaraCents)
+    pitchPlotNew(xValues, yValues, 400, 600, w, h, tonic, svaraCents)
 
     // General Buttons
     gralBtns.append("input")

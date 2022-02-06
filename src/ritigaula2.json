@@ -3,8 +3,14 @@
 	"svaraCents": {"N2": 1000, "D2": 900, "P": 700, "M1": 500, "G2": 300, "R2": 200, "S": 0}, 
 	"performances": {
 		"Akkarai Sisters - Koti Janmani": {
-			"paths": {"audio": "audio_path", "pitch": "pitch_path"},
-			"metadata": {"feature1":"this", "feature2": "that"},
+			"paths": {"audio": "audio_path2", "pitch": "pitch_path2"},
+			"metadata": {
+				"tonic": 196, 
+				"artist": "Akkarai Sisters",
+				"name": "Koti Janmani",
+				"composer": "Oottukkadu Venkata Kavi",
+				"raga": "Ritigaula"
+			},
 			"motifsGroups": [
 				[
 					{"start":300,  "length":400},
@@ -16,7 +22,13 @@
 		},
 		"Akkarai Sisters - Another Great Ritigaula": {
 			"paths": {"audio": "audio_path2", "pitch": "pitch_path2"},
-			"metadata": {"tonic": 196, "feature2": "that2"},
+			"metadata": {
+				"tonic": 196, 
+				"artist": "Akkarai Sisters",
+				"name": "Koti Janmani",
+				"composer": "Oottukkadu Venkata Kavi",
+				"raga": "Ritigaula"
+			},
 			"motifsGroups": [
 				[
 					{"start":700,  "length":1000},

@@ -63,6 +63,13 @@ input[type="button"] {
   stroke-width: 1;
 }
 
+.patternArea {
+  fill: #69a3b2;
+  stroke: black;
+  stroke-width: 1;
+  opacity: 0.2;
+}
+
 .pitchLine {
   fill: none;
   stroke: grey;
