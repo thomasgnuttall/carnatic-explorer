@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta charset="utf-8">
+		<title>Carnatic Patterns Visualiser</title>
+		<link href="styles/style.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="scripts/d3.min.js"></script>
+		<script type="text/javascript" src="scripts/script.js" async></script>
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+	</head>
+
+	<body>
+
+		<div class=container>
+			<h1 style="color:black;"> Carnatic Patterns Visualiser</h1>
+
+			<div class="menu">
+				<div class="option">
+					<input type="radio" name="options" value="src/ritigaula2.json" checked/>
+					<label>Ritigaula</label>
+				</div>
+
+				<div class="option">
+					<input type="radio" name="options" value="src/daxpybx.json" />
+					<label>Bhairavi</label>
+				</div>
+
+				<div class="option">
+					<input type="radio" name="options" value="src/lsxpybs.json" />
+					<label>Todi</label>
+				</div>
+
+				<div class="option">
+					<input type="radio" name="options" value="src/lsxpybx.json" />
+					<label>Sankarabharanam</label>
+				</div>
+			</div>
+
+			<div class=chart>
+			</div>
+			
+			<div class=player>
+			</div>
+
+			<div class=lines>
+			</div>
+
+			<footer>
+				<p>Done by Rafael Caro Repetto, within the
+				<a href="https://www.upf.edu/web/musicalbridges"
+				title="Musical Bridges" target="_blank">Musical Bridges</a> project
+				(Music Technology	Group, Universitat Poempeu Fabra, Barcelona)</p>
+
+				<p>This tool is inspired in Christopher Witulski's
+				<a href="https://cjwit.github.io/malhun-contour/index.html"
+				title="Christopher Witulski's '68 Melodic Contours from Malhun'"
+				target="_blank">
+				"68 Melodic Contours from Malhun"</a></p>
+			</footer>
+		</div>
+	</body>
+</html>
