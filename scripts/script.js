@@ -24,7 +24,6 @@ function swap(o){
   return ret;
 }
 
-
 var pitchToCents = function(pitchValues, tonic) {
   var pitchCents = [];
   for(let i = 0; i < pitchValues.length; i++) {
@@ -178,6 +177,23 @@ var pitchPlotNew = function(
         .style("stroke", "orange")
         .style("stroke-width", 1);
 
+  // Invisible entire track region
+  svg.append("rect") 
+        .attr("x", xScale(minTime))
+        .attr("y", yScale(maxPitch))
+        .attr("width", w-paddingRight-xScale(minTime))
+        .attr("height", yScale(minPitch)-paddingTop)
+        .style("opacity", 0)
+        .on("mouseover", function(d) {
+          d3.select(this)
+            .style("fill", "grey")
+            .style("stroke", "black")
+            .style("stroke-width", 1)
+            .style("opacity", "0.1");
+        })                  
+        .on("mouseout", function(d) {
+          d3.select(this).style("opacity", 0); // this shohuld be identical to that in style.css
+        });
 
   // Highlighed pattern region
   svg.append("rect") 
@@ -185,8 +201,13 @@ var pitchPlotNew = function(
         .attr("y", yScale(maxPitch))
         .attr("width", t2-t1)
         .attr("height", yScale(minPitch)-paddingTop)
-        .attr("class", 'patternArea');
-
+        .attr("class", 'patternArea')
+        .on("mouseover", function(d) {
+          d3.select(this).style("opacity", "0.3");
+        })                  
+        .on("mouseout", function(d) {
+          d3.select(this).style("opacity", "0.2"); // this shohuld be identical to that in style.css
+        });
 };
 
 var carnaticPatterns = function(dataFile) {
