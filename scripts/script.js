@@ -50,6 +50,43 @@ var createDatum = function(pitchValues, timeValues) {
   return datum
 };
 
+var loadPitchTrack = function(path) {
+  pitchValues = [];
+  timeValues = [];
+  d3.tsv(path).then(function(data){
+    data.forEach(function(d) {
+      d.time = parseFloat(d.time);
+      d.pitch = parseFloat(d.pitch);
+    });
+    data.map(function(d){
+        pitchValues.push(d.time);
+        timeValues.push(d.pitch);
+    });
+  });
+  console.log(pitchValues)
+  return [pitchValues, timeValues]
+};
+
+var getAllPerformancePaths = function(performances) {
+  var pitchTrackPaths = [];
+  var audioTrackPaths = [];
+  for (const key in performances) {
+    pitchTrackPaths.push(performances[key].paths.pitch);
+    audioTrackPaths.push(performances[key].paths.audio);
+  };
+  return [pitchTrackPaths, audioTrackPaths];
+};
+
+var parsePitchTrack = function(track) {
+  var pitch = [];
+  var time = [];
+  for (var i = 0; i < track.length; i++) {
+    pitch.push(parseFloat(track[i].pitch));
+    time.push(parseFloat(track[i].time));
+  }
+  return [pitch, time];
+};
+
 var pitchPlotNew = function(
   timeValues, pitchValues, t1, t2, w, h, tonic, svaraCents) {
   
@@ -70,7 +107,7 @@ var pitchPlotNew = function(
   var maxPitch = Math.ceil(d3.max(pitchCents)) + pitchPadding;
     
   // Configure axis
-  var xTicks = d3.range(minTime, maxTime, 150);
+  var xTicks = d3.range(minTime, maxTime, 1);
 
   var xScale = d3.scaleLinear()
                  .domain([minTime, maxTime])
@@ -199,7 +236,7 @@ var pitchPlotNew = function(
   svg.append("rect") 
         .attr("x", xScale(t1))
         .attr("y", yScale(maxPitch))
-        .attr("width", t2-t1)
+        .attr("width", xScale(t2)-xScale(t1))
         .attr("height", yScale(minPitch)-paddingTop)
         .attr("class", 'patternArea')
         .on("mouseover", function(d) {
@@ -219,17 +256,28 @@ var carnaticPatterns = function(dataFile) {
 
     var svaraCents   = data.svaraCents;
     var performances = data.performances;
+    var paths = getAllPerformancePaths(performances);
+    var pitchTrackPaths = paths[0];
+    var audioPaths = paths[1];
+    console.log(pitchTrackPaths)
+    var promises = [];
 
-    //var ppOut = pitchPlot(dataset, w, h, linesRows, linesColumns, xAxis, yAxis, xAxisValues, yAxisValues, 
-      //            paddingLeft, paddingRight, paddingTop, paddingBottom, upbeats, minPitch, yScale, xScale, titles, line, opacity);
+    pitchTrackPaths.forEach(function(path) {
+      promises.push(d3.tsv(path))
+    });
     
-    
-    //var gralBtns = ppOut[0];
-    //var checkedLines = ppOut[1];
-    
-    xValues = time.slice(100, 1000)
-    yValues = pitch.slice(100, 1000)
-    pitchPlotNew(xValues, yValues, 400, 600, w, h, tonic, svaraCents)
+    Promise.all(promises).then(function(values) {
+      pitchTracks = [];
+      for (var i = 0; i < values.length; i++) {
+        pitchTracks.push(parsePitchTrack(values[i]));
+      }
+      var pitch = pitchTracks[0][0];
+      var time = pitchTracks[0][1];
+      xValues = time.slice(100, 10000)
+      yValues = pitch.slice(100, 10000)
+      pitchPlotNew(xValues, yValues, 13, 20, w, h, tonic, svaraCents)
+    });
+
 
     // General Buttons
     gralBtns.append("input")

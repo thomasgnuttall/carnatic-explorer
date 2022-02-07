@@ -3,7 +3,7 @@
 	"svaraCents": {"N2": 1000, "D2": 900, "P": 700, "M1": 500, "G2": 300, "R2": 200, "S": 0}, 
 	"performances": {
 		"Akkarai Sisters - Koti Janmani": {
-			"paths": {"audio": "audio_path2", "pitch": "pitch_path2"},
+			"paths": {"audio": "audio_path2", "pitch": "data/Koti_Janmani_pitch.tsv"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -21,7 +21,7 @@
 			]
 		},
 		"Akkarai Sisters - Another Great Ritigaula": {
-			"paths": {"audio": "audio_path2", "pitch": "pitch_path2"},
+			"paths": {"audio": "audio_path2", "pitch": "data/Koti_Janmani_pitch.tsv"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
