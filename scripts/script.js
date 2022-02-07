@@ -9,13 +9,6 @@ var linesRows = 10;
 var pitchPadding = 50; // in cents
 var tonic = 196;
 
-// for now random pitch values, to replace later
-var pitch = [];
-for(let i = 0; i < 10000; i++) {
-  pitch.push(Math.random() * (400 - 150) + 150);
-}
-var time = d3.range(0,10000)
-
 function swap(o){
   var ret = {};
   for(var key in o){
@@ -50,23 +43,6 @@ var createDatum = function(pitchValues, timeValues) {
   return datum
 };
 
-var loadPitchTrack = function(path) {
-  pitchValues = [];
-  timeValues = [];
-  d3.tsv(path).then(function(data){
-    data.forEach(function(d) {
-      d.time = parseFloat(d.time);
-      d.pitch = parseFloat(d.pitch);
-    });
-    data.map(function(d){
-        pitchValues.push(d.time);
-        timeValues.push(d.pitch);
-    });
-  });
-  console.log(pitchValues)
-  return [pitchValues, timeValues]
-};
-
 var getAllPerformancePaths = function(performances) {
   var pitchTrackPaths = [];
   var audioTrackPaths = [];
@@ -87,14 +63,35 @@ var parsePitchTrack = function(track) {
   return [pitch, time];
 };
 
+var expandCentsSvara = function(centsSvara) {
+  var expandedCentsSvara = {};
+  for (const key in centsSvara) {
+    var val = centsSvara[key];
+    var intKey = parseInt(key);
+    expandedCentsSvara[intKey] = val;
+    expandedCentsSvara[intKey+1200] = val;
+    expandedCentsSvara[intKey+2400] = val;
+    expandedCentsSvara[intKey-1200] = val;
+    expandedCentsSvara[intKey-2400] = val;
+  };
+  return expandedCentsSvara;
+};
+
+var reduceCentsSvara = function(centsSvara, minPitch, maxPitch) {
+  reducedCentsSvara = {};
+  for (const key in centsSvara) {
+    if ((key > minPitch) && (key < maxPitch)) {
+      reducedCentsSvara[key] = centsSvara[key]
+    };
+  };
+  return reducedCentsSvara;
+};
+
 var pitchPlotNew = function(
   timeValues, pitchValues, t1, t2, w, h, tonic, svaraCents) {
   
-  var centsSvara = swap(svaraCents);
+  // Convert Hz to Cents
   var pitchCents = pitchToCents(pitchValues, tonic);
-  var allSvaras = d3.values(svaraCents);
-
-  // TODO: expand svaracents to ocataves
 
   // Get formated data
   data = createDatum(pitchCents, timeValues)
@@ -105,7 +102,12 @@ var pitchPlotNew = function(
   
   var minPitch = Math.floor(d3.min(pitchCents)) - pitchPadding;
   var maxPitch = Math.ceil(d3.max(pitchCents)) + pitchPadding;
-    
+  
+  // Get only the svaras we care about
+  var centsSvara = expandCentsSvara(swap(svaraCents));
+  var centsSvara = reduceCentsSvara(centsSvara, minPitch, maxPitch);
+  var allSvaras = d3.keys(centsSvara);
+
   // Configure axis
   var xTicks = d3.range(minTime, maxTime, 1);
 
@@ -247,19 +249,23 @@ var pitchPlotNew = function(
         });
 };
 
-var carnaticPatterns = function(dataFile) {
-  d3.json(dataFile).then(function(data) {
-
+var removePlot = function() {
     d3.select("svg").remove();
     d3.select(".gralBtns").remove();
     d3.selectAll(".lineSelector").remove();
+};
 
-    var svaraCents   = data.svaraCents;
+var carnaticPatterns = function(dataFile) {
+  d3.json(dataFile).then(function(data) {
+
+    removePlot();
+
+    var svaraCents = data.svaraCents;
     var performances = data.performances;
     var paths = getAllPerformancePaths(performances);
     var pitchTrackPaths = paths[0];
     var audioPaths = paths[1];
-    console.log(pitchTrackPaths)
+    
     var promises = [];
 
     pitchTrackPaths.forEach(function(path) {
@@ -273,12 +279,16 @@ var carnaticPatterns = function(dataFile) {
       }
       var pitch = pitchTracks[0][0];
       var time = pitchTracks[0][1];
+
       xValues = time.slice(100, 10000)
       yValues = pitch.slice(100, 10000)
+
       pitchPlotNew(xValues, yValues, 13, 20, w, h, tonic, svaraCents)
+
+
     });
 
-
+/*
     // General Buttons
     gralBtns.append("input")
             .attr("type", "button")
@@ -438,7 +448,9 @@ var carnaticPatterns = function(dataFile) {
           ariaCheckbox.property("checked", true);
         };
       });
+        */
   });
+
 };
 
 var defaultFile = d3.select("input[type='radio']:checked").property("value")
