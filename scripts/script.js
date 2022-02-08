@@ -7,7 +7,6 @@ var paddingRight = 15;
 var linesColumns = 9;
 var linesRows = 10;
 var pitchPadding = 50; // in cents
-var tonic = 196;
 
 function swap(o){
   var ret = {};
@@ -51,6 +50,22 @@ var getAllPerformancePaths = function(performances) {
     audioTrackPaths.push(performances[key].paths.audio);
   };
   return [pitchTrackPaths, audioTrackPaths];
+};
+
+var getAllMetadata = function(performances) {
+  var metadata = [];
+  for (const key in performances) {
+    metadata.push(performances[key].metadata);
+  };
+  return metadata;
+};
+
+var getAllMotifs = function(performances) {
+  var motifs = [];
+  for (const key in performances) {
+    motifs.push(performances[key].motifsGroups);
+  };
+  return motifs;
 };
 
 var parsePitchTrack = function(track) {
@@ -181,7 +196,7 @@ var pitchPlotNew = function(
      .attr("y1", function(d) {return yScale(d);})
      .attr("y2", function(d) {return yScale(d);})
      .attr("class", function(d) {
-       if((d%tonic == 0)) {
+       if((d%1200 == 0)) {
          return "tonicLine";
        } else {
          return "pitchLine"
@@ -236,17 +251,46 @@ var pitchPlotNew = function(
 
   // Highlighed pattern region
   svg.append("rect") 
-        .attr("x", xScale(t1))
-        .attr("y", yScale(maxPitch))
-        .attr("width", xScale(t2)-xScale(t1))
-        .attr("height", yScale(minPitch)-paddingTop)
-        .attr("class", 'patternArea')
-        .on("mouseover", function(d) {
-          d3.select(this).style("opacity", "0.3");
-        })                  
-        .on("mouseout", function(d) {
-          d3.select(this).style("opacity", "0.2"); // this shohuld be identical to that in style.css
-        });
+     .attr("x", xScale(t1))
+     .attr("y", yScale(maxPitch))
+     .attr("width", xScale(t2)-xScale(t1))
+     .attr("height", yScale(minPitch)-paddingTop)
+     .attr("class", 'patternArea')
+     .on("mouseover", function(d) {
+       d3.select(this).style("opacity", "0.3");
+     })
+     .on("mouseout", function(d) {
+       d3.select(this).style("opacity", "0.2"); // this shohuld be identical to that in style.css
+     });
+};
+
+var addMetadata = function(metadata) {
+  // TODO: improve tthis
+  var chart = d3.select(".chart");
+  console.log(chart.width);
+
+  var svg = chart.append("svg")
+                 .attr("width", 500)
+                 .attr("height", h);
+
+  yInit = 30
+  for (const key in metadata) {
+    val = metadata[key];
+    svg.append("text")
+        .attr("text-anchor", "left")
+        .attr("alignment-baseline", "middle")
+        .attr("x", 0)
+        .attr("y", yInit)
+        .text(key + ': ' + val);
+    yInit += 30
+  }  
+  
+  //svg.append("rect") 
+  //      .attr("x", 0)
+  //      .attr("y", 0)
+  //      .attr("width", w)
+  //      .attr("height", h)
+  //      .style('fill', 'black');
 };
 
 var removePlot = function() {
@@ -263,28 +307,40 @@ var carnaticPatterns = function(dataFile) {
     var svaraCents = data.svaraCents;
     var performances = data.performances;
     var paths = getAllPerformancePaths(performances);
+    var metadatas = getAllMetadata(performances);
+    var motifs = getAllMotifs(performances);
     var pitchTrackPaths = paths[0];
     var audioPaths = paths[1];
     
     var promises = [];
 
+    // Add pitch tracks to queue
     pitchTrackPaths.forEach(function(path) {
       promises.push(d3.tsv(path))
     });
     
     Promise.all(promises).then(function(values) {
+
+      // Load and parse pitch/audio tracks
       pitchTracks = [];
+      audioTracks = [];
       for (var i = 0; i < values.length; i++) {
         pitchTracks.push(parsePitchTrack(values[i]));
+        //audioTracks.push(p5.loadSound(audioPaths[i]));
       }
+      
+      //audioTracks[0].play();
+
       var pitch = pitchTracks[0][0];
       var time = pitchTracks[0][1];
+      var metadata = metadatas[0];
 
+      tonic = metadata.tonic;
       xValues = time.slice(100, 10000)
       yValues = pitch.slice(100, 10000)
 
       pitchPlotNew(xValues, yValues, 13, 20, w, h, tonic, svaraCents)
-
+      addMetadata(metadata);
 
     });
 
