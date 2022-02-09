@@ -86,7 +86,7 @@ var pitchPlot = function(
   dataset, w, h, linesRows, linesColumns, xAxis, yAxis, xAxisValues, yAxisValues, paddingLeft, 
   paddingRight, paddingTop, paddingBottom, upbeats, minPitch, yScale, xScale, titles, line, opacity) {
     
-    var chart = d3.select(".chart")
+    var chart = d3.select(".chart");
 
     var svg = chart.append("svg")
                   .attr("width", w)

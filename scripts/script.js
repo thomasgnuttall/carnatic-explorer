@@ -16,23 +16,7 @@ function swap(o){
   return ret;
 }
 
-//var play = function(id, start, end) {
-//  var audio = document.getElementById(id)
-//  
-//  audio.oncanplay = function() {
-//      audio.currentTime = 44100;
-//      console.log(audio.currentTime);
-//  };
-
-//  audio.addEventListener("timeupdate", function() {
-//      if(this.currentTime >= end) {
-//          this.pause();
-//      }
-//  });
-//  audio.play();
-//}
-var play = function(id, start, end) {
-  var duration = end-start;
+var play = function(id, start, duration) {
   var props = new createjs.PlayPropsConfig().set({
     startTime: start*1000,
     duration: duration*1000,
@@ -130,7 +114,7 @@ var reduceCentsSvara = function(centsSvara, minPitch, maxPitch) {
 };
 
 var pitchPlotNew = function(
-  timeValues, pitchValues, audioID, t1, t2, w, h, tonic, svaraCents) {
+  timeValues, pitchValues, audioID, start, duration, w, h, tonic, svaraCents) {
   
   // Convert Hz to Cents
   var pitchCents = pitchToCents(pitchValues, tonic);
@@ -178,12 +162,13 @@ var pitchPlotNew = function(
   ////////////////////
   // Populate chart //
   ///////////////// //
-  var chart = d3.select(".chart");
+  var chart = d3.select("#chartPlot");
 
   var svg = chart.append("svg")
                  .attr("width", w)
-                 .attr("height", h);
-
+                 .attr("height", h)
+                 .attr('id', 'plot');
+  
   // Axis stuff
   svg.append("g")
       .attr("class", "yAxis")
@@ -276,14 +261,15 @@ var pitchPlotNew = function(
           d3.select(this).style("opacity", 0); // this shohuld be identical to that in style.css
         })
         .on('click', function(d) {
-          play(audioID, minTime, maxTime)
+          play(audioID, minTime, (maxTime-minTime))
         });
 
   // Highlighted pattern region
+  var end = (start + duration);
   svg.append("rect") 
-     .attr("x", xScale(t1))
+     .attr("x", xScale(start))
      .attr("y", yScale(maxPitch))
-     .attr("width", xScale(t2)-xScale(t1))
+     .attr("width", xScale(end)-xScale(start))
      .attr("height", yScale(minPitch)-paddingTop)
      .attr("class", 'patternArea')
      .on("mouseover", function(d) {
@@ -293,7 +279,7 @@ var pitchPlotNew = function(
        d3.select(this).style("opacity", "0.2"); // this should be identical to that in style.css
      })
      .on('click', function(d) {
-        play(audioID, t1, t2)
+        play(audioID, start, duration)
     });
 };
 
@@ -303,7 +289,8 @@ var addMetadata = function(metadata, imagePath) {
   
   var svg = chart.append("svg")
                  .attr("width", 600)
-                 .attr("height", h);
+                 .attr("height", h)
+                 .attr('id', 'metadata');
 
   yInit = 30
   for (const key in metadata) {
@@ -337,6 +324,7 @@ var addMetadata = function(metadata, imagePath) {
   //      .attr("height", h)
   //      .style('fill', 'black');
 };
+
 
 var clean = function() {
     d3.select("svg").remove();
@@ -384,14 +372,80 @@ var carnaticPatterns = function(dataFile) {
       var audioID = audioTracks[0];
 
       tonic = metadata.tonic;
-      xValues = time.slice(100, 10000)
-      yValues = pitch.slice(100, 10000)
+      xValues = time.slice(9000, 11000)
+      yValues = pitch.slice(9000, 11000)
 
-      pitchPlotNew(xValues, yValues, audioID, 13, 20, w, h, tonic, svaraCents)
+      pitchPlotNew(xValues, yValues, audioID, 44.5, 3, w, h, tonic, svaraCents);
       addMetadata(metadata, imagePath);
+
+
+      var motifGroups = [
+        [{
+          'performance':"Akkarai Sisters - Koti Janmani", 
+          "start": 44.5, 
+          'duration': 5
+        },
+        {
+          'performance':"Akkarai Sisters - Koti Janmani", 
+          "start": 67, 
+          'duration': 5
+        }],
+        [{
+          'performance':"Akkarai Sisters - Koti Janmani", 
+          "start": 3, 
+          'duration': 5
+        },
+        {
+          'performance':"Akkarai Sisters - Koti Janmani", 
+          "start": 360, 
+          'duration': 5
+        }]
+      ];
+    
+    // add the options to the button
+    d3.select("#selectButton")
+      .selectAll('myOptions')
+      .data([1,2,3,4])
+      .enter()
+      .append('option')
+      .text(function (d) { return 'motif group '+ d; }) // text showed in the menu
+      .attr("value", function (d) { return d-1; }) // corresponding value returned by the button
 
     });
 
+    // A function that update the chart
+    function updatePlot(g) {
+
+      // remove old plot
+      var plot = document.getElementById("plot");
+      var metadata = document.getElementById("metadata");
+
+      plot.remove()
+      metadata.remove()
+
+      //var group = motifGroups[g];
+
+      var pitch = pitchTracks[0][0];
+      var time = pitchTracks[0][1];
+      var metadata = metadatas[0];
+      var imagePath = imagePaths[0];
+      var audioID = audioTracks[0];
+
+      tonic = metadata.tonic;
+      xValues = time.slice(19000, 20000);
+      yValues = pitch.slice(19000, 20000);
+
+      pitchPlotNew(xValues, yValues, audioID, 85, 2, w, h, tonic, svaraCents)
+      addMetadata(metadata, imagePath);
+    };
+
+    // When the button is changed, run the updateChart function
+    d3.select("#selectButton").on("change", function(d) {
+        // recover the option that has been chosen
+        var g = d3.select(this).property("value")
+        // run the updateChart function with this selected option
+        updatePlot(g);
+    });
 /*
     // General Buttons
     gralBtns.append("input")
