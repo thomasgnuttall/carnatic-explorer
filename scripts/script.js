@@ -16,6 +16,31 @@ function swap(o){
   return ret;
 }
 
+//var play = function(id, start, end) {
+//  var audio = document.getElementById(id)
+//  
+//  audio.oncanplay = function() {
+//      audio.currentTime = 44100;
+//      console.log(audio.currentTime);
+//  };
+
+//  audio.addEventListener("timeupdate", function() {
+//      if(this.currentTime >= end) {
+//          this.pause();
+//      }
+//  });
+//  audio.play();
+//}
+var play = function(id, start, end) {
+  var duration = end-start;
+  var props = new createjs.PlayPropsConfig().set({
+    startTime: start*1000,
+    duration: duration*1000,
+    interrupt: createjs.Sound.INTERRUPT_ANY
+  });
+  var sound = createjs.Sound.play(id, props);
+};
+
 var pitchToCents = function(pitchValues, tonic) {
   var pitchCents = [];
   for(let i = 0; i < pitchValues.length; i++) {
@@ -45,11 +70,13 @@ var createDatum = function(pitchValues, timeValues) {
 var getAllPerformancePaths = function(performances) {
   var pitchTrackPaths = [];
   var audioTrackPaths = [];
+  var imagePaths = [];
   for (const key in performances) {
     pitchTrackPaths.push(performances[key].paths.pitch);
     audioTrackPaths.push(performances[key].paths.audio);
+    imagePaths.push(performances[key].paths.image);
   };
-  return [pitchTrackPaths, audioTrackPaths];
+  return [pitchTrackPaths, audioTrackPaths, imagePaths];
 };
 
 var getAllMetadata = function(performances) {
@@ -103,7 +130,7 @@ var reduceCentsSvara = function(centsSvara, minPitch, maxPitch) {
 };
 
 var pitchPlotNew = function(
-  timeValues, pitchValues, t1, t2, w, h, tonic, svaraCents) {
+  timeValues, pitchValues, audioID, t1, t2, w, h, tonic, svaraCents) {
   
   // Convert Hz to Cents
   var pitchCents = pitchToCents(pitchValues, tonic);
@@ -247,9 +274,12 @@ var pitchPlotNew = function(
         })                  
         .on("mouseout", function(d) {
           d3.select(this).style("opacity", 0); // this shohuld be identical to that in style.css
+        })
+        .on('click', function(d) {
+          play(audioID, minTime, maxTime)
         });
 
-  // Highlighed pattern region
+  // Highlighted pattern region
   svg.append("rect") 
      .attr("x", xScale(t1))
      .attr("y", yScale(maxPitch))
@@ -260,31 +290,46 @@ var pitchPlotNew = function(
        d3.select(this).style("opacity", "0.3");
      })
      .on("mouseout", function(d) {
-       d3.select(this).style("opacity", "0.2"); // this shohuld be identical to that in style.css
-     });
+       d3.select(this).style("opacity", "0.2"); // this should be identical to that in style.css
+     })
+     .on('click', function(d) {
+        play(audioID, t1, t2)
+    });
 };
 
-var addMetadata = function(metadata) {
+var addMetadata = function(metadata, imagePath) {
   // TODO: improve tthis
   var chart = d3.select(".chart");
-  console.log(chart.width);
-
+  
   var svg = chart.append("svg")
-                 .attr("width", 500)
+                 .attr("width", 600)
                  .attr("height", h);
 
   yInit = 30
   for (const key in metadata) {
     val = metadata[key];
+    if (key=='tonic') {
+      var val = val + 'Hz'
+    };
     svg.append("text")
         .attr("text-anchor", "left")
         .attr("alignment-baseline", "middle")
         .attr("x", 0)
         .attr("y", yInit)
-        .text(key + ': ' + val);
+        .text(key + ': ' + val)
+        .style('text-transform', 'capitalize');
+
     yInit += 30
-  }  
+  };
   
+  if (imagePath) {
+    svg.append("svg:image")
+       .attr('x', 300)
+       .attr('y', -25)
+       .attr('width', 250)
+       .attr('height', 250)
+       .attr("xlink:href", imagePath)
+  };
   //svg.append("rect") 
   //      .attr("x", 0)
   //      .attr("y", 0)
@@ -293,16 +338,17 @@ var addMetadata = function(metadata) {
   //      .style('fill', 'black');
 };
 
-var removePlot = function() {
+var clean = function() {
     d3.select("svg").remove();
     d3.select(".gralBtns").remove();
     d3.selectAll(".lineSelector").remove();
+    createjs.Sound.removeAllSounds();
 };
 
 var carnaticPatterns = function(dataFile) {
   d3.json(dataFile).then(function(data) {
 
-    removePlot();
+    clean();
 
     var svaraCents = data.svaraCents;
     var performances = data.performances;
@@ -311,6 +357,7 @@ var carnaticPatterns = function(dataFile) {
     var motifs = getAllMotifs(performances);
     var pitchTrackPaths = paths[0];
     var audioPaths = paths[1];
+    var imagePaths = paths[2];
     
     var promises = [];
 
@@ -320,27 +367,28 @@ var carnaticPatterns = function(dataFile) {
     });
     
     Promise.all(promises).then(function(values) {
-
       // Load and parse pitch/audio tracks
       pitchTracks = [];
       audioTracks = [];
       for (var i = 0; i < values.length; i++) {
         pitchTracks.push(parsePitchTrack(values[i]));
-        //audioTracks.push(p5.loadSound(audioPaths[i]));
+        var audioIDName = 'audio' + i;
+        audioTracks.push('audioIDName')
+        createjs.Sound.registerSound(audioPaths[i], 'audioIDName');
       }
       
-      //audioTracks[0].play();
-
       var pitch = pitchTracks[0][0];
       var time = pitchTracks[0][1];
       var metadata = metadatas[0];
+      var imagePath = imagePaths[0];
+      var audioID = audioTracks[0];
 
       tonic = metadata.tonic;
       xValues = time.slice(100, 10000)
       yValues = pitch.slice(100, 10000)
 
-      pitchPlotNew(xValues, yValues, 13, 20, w, h, tonic, svaraCents)
-      addMetadata(metadata);
+      pitchPlotNew(xValues, yValues, audioID, 13, 20, w, h, tonic, svaraCents)
+      addMetadata(metadata, imagePath);
 
     });
 

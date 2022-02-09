@@ -3,7 +3,7 @@
 	"svaraCents": {"N2": 1000, "D2": 900, "P": 700, "M1": 500, "G2": 300, "R2": 200, "S": 0}, 
 	"performances": {
 		"Akkarai Sisters - Koti Janmani": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -21,7 +21,7 @@
 			]
 		},
 		"Akkarai Sisters - Another Great Ritigaula": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -38,7 +38,7 @@
 			]
 		},
 		"Akkarai Sisters - And Another Great Ritigaula": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -55,7 +55,7 @@
 			]
 		},
 		"Akkarai Sisters - More Ritigaula": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -72,7 +72,7 @@
 			]
 		},
 		"Akkarai Sisters - The very best of Ritigaula": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -89,7 +89,7 @@
 			]
 		},
 		"Akkarai Sisters - Ritigaula Uncut": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -106,7 +106,7 @@
 			]
 		},
 		"Akkarai Sisters - Now thats what I call Ritigaula": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -123,7 +123,7 @@
 			]
 		},
 		"Akkarai Sisters - Not another Ritigaula": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -140,7 +140,7 @@
 			]
 		},
 		"Akkarai Sisters - Ritgaula with a vengeance": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",
@@ -157,7 +157,7 @@
 			]
 		},
 		"Akkarai Sisters - Ritigaulisimo": {
-			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "image_path2"},
+			"paths": {"audio": "data/Koti_Janmani.mp3", "pitch": "data/Koti_Janmani_pitch.tsv", "image": "data/akkarai_sisters.jpeg"},
 			"metadata": {
 				"tonic": 196, 
 				"artist": "Akkarai Sisters",

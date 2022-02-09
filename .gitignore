@@ -1,3 +1,5 @@
 *.mp3
 *.tsv
+*.jpeg
+*.png
 .DS_Store
