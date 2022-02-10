@@ -5,8 +5,7 @@
 		<meta charset="utf-8">
 		<title>Carnatic Patterns Explorer</title>
 		<link href="styles/style.css" rel="stylesheet" type="text/css">
-		<script type="text/javascript" src="scripts/d3.js"></script>
-		<script type="text/javascript" src="scripts/d3.min.js"></script>
+		<script src="https://d3js.org/d3.v6.min.js"></script>
 		<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script></head>
 	    <script type="text/javascript" src="scripts/script.js" async></script>
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&display=swap" rel="stylesheet">
@@ -40,6 +39,10 @@
 			</div>
 
 			<div class=chart id='chartPlot'>
+				  <div class="row align-items-center">
+				    <div class="col-sm-2"><p id="value-simple"></p></div>
+				    <div class="col-sm"><div id="slider-simple"></div></div>
+				  </div>
 			</div>
 
 			<div class=chart id='chartOptions'>
